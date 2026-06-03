@@ -21,6 +21,17 @@
 
 ## 一行安装
 
+### 从 Release 下载后双击安装
+
+如果你不想复制命令，可以到 [Releases](https://github.com/zixiaomiao/obsidian-codex-memory/releases) 下载对应系统的安装文件：
+
+- macOS：下载 `install-macos.command`，双击运行
+- Windows：下载 `install-windows.cmd`，双击运行
+
+安装器会自动下载插件并注册到 Codex 的个人插件市场。
+
+### 复制命令安装
+
 macOS 或 Linux：
 
 ```bash

@@ -21,6 +21,17 @@ For the future optimization plan, see [ROADMAP.md](ROADMAP.md).
 
 ## One-line install
 
+### Download from Releases and double-click
+
+If you do not want to copy commands, download the installer for your system from [Releases](https://github.com/zixiaomiao/obsidian-codex-memory/releases):
+
+- macOS: download `install-macos.command`, then double-click it
+- Windows: download `install-windows.cmd`, then double-click it
+
+The installer downloads the plugin and registers it in the Codex personal marketplace.
+
+### Copy-and-paste install
+
 macOS or Linux:
 
 ```bash
