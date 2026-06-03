@@ -23,12 +23,14 @@ For the future optimization plan, see [ROADMAP.md](ROADMAP.md).
 
 ### Download from Releases and double-click
 
-If you do not want to copy commands, download the installer for your system from [Releases](https://github.com/zixiaomiao/obsidian-codex-memory/releases):
+If you do not want to copy commands, download the installer for your system:
 
-- macOS: download `install-macos.command`, then double-click it
-- Windows: download `install-windows.cmd`, then double-click it
+- macOS: download [`install-macos.command`](https://raw.githubusercontent.com/zixiaomiao/obsidian-codex-memory/main/release-assets/install-macos.command), then double-click it
+- Windows: download [`install-windows.cmd`](https://raw.githubusercontent.com/zixiaomiao/obsidian-codex-memory/main/release-assets/install-windows.cmd), then double-click it
 
 The installer downloads the plugin and registers it in the Codex personal marketplace.
+
+You can also download versioned assets from [Releases](https://github.com/zixiaomiao/obsidian-codex-memory/releases).
 
 ### Copy-and-paste install
 
