@@ -6,6 +6,8 @@
 
 这是一个 **Codex 插件**，不是 Obsidian 社区插件。它可以让 Codex 读取一份精简记忆笔记、追加会话总结，并且在 Obsidian vault 是 Git 仓库时，选择性把记忆文件同步到 GitHub。
 
+后续优化规划见 [ROADMAP.md](ROADMAP.md)。
+
 ## 功能
 
 - 从你的 Obsidian vault 读取 `Codex/Codex 会话总结.md`。

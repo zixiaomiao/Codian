@@ -6,6 +6,8 @@ Use an Obsidian vault as long-term memory for Codex.
 
 This is a **Codex plugin**, not an Obsidian community plugin. It lets Codex read a compact memory note, append session summaries, and optionally sync the memory note through a Git-backed Obsidian vault.
 
+For the future optimization plan, see [ROADMAP.md](ROADMAP.md).
+
 ## What it does
 
 - Reads `Codex/Codex 会话总结.md` from your Obsidian vault.
