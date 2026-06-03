@@ -176,6 +176,14 @@ def git_changed_paths(vault: Path) -> List[str]:
     return paths
 
 
+def allowed_memory_change(path: str, allowed: set) -> bool:
+    if path in allowed:
+        return True
+    if path.endswith("/"):
+        return any(item.startswith(path) for item in allowed)
+    return False
+
+
 def now_iso() -> str:
     return datetime.now(timezone(timedelta(hours=8))).replace(microsecond=0).isoformat()
 
@@ -648,7 +656,7 @@ def sync_github(dry_run: bool = False, branch: str = "main") -> None:
 
     run(["git", "fetch", "origin", branch], cwd=vault)
     changed = git_changed_paths(vault)
-    disallowed = [p for p in changed if p not in allowed]
+    disallowed = [p for p in changed if not allowed_memory_change(p, allowed)]
 
     print("Changed files:")
     for p in changed:
