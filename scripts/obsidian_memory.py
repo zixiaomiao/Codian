@@ -14,6 +14,8 @@ from typing import List, Optional
 APP_NAME = "obsidian-codex-memory"
 DEFAULT_MEMORY_REL = Path("Codex/Codex 会话总结.md")
 DEFAULT_EXTRA_MEMORY_REL = Path("Codex/MACOS_CODEX_OBSIDIAN_MEMORY.md")
+STARTUP_HEADING = "## 启动必读"
+LOGS_HEADING = "## 会话日志"
 ALLOWED_OVERWRITE = {
     DEFAULT_MEMORY_REL.as_posix(),
     DEFAULT_EXTRA_MEMORY_REL.as_posix(),
@@ -145,7 +147,110 @@ def now_iso() -> str:
     return datetime.now(timezone(timedelta(hours=8))).replace(microsecond=0).isoformat()
 
 
-def init(vault: str, memory: Optional[str]) -> None:
+def current_system_name() -> str:
+    system = platform.system()
+    if system == "Darwin":
+        return "macOS"
+    return system or "unknown"
+
+
+def default_memory_template(vault: Path, rel: Path) -> str:
+    return f"""# Codex 会话总结
+
+## 启动必读
+
+- 启动时先判断当前系统；读取当前系统对应的 Obsidian vault。
+- 当前系统：`{current_system_name()}`
+- 当前 Obsidian vault：`{vault}`
+- 主会话总结相对路径：`{rel.as_posix()}`
+- GitHub 仓库：未配置；如果 vault 是 Git 仓库，使用 `git remote -v` 确认远程和分支。
+- Obsidian 主分类：按用户自己的 vault 结构为准；常见可用分类包括 AI 编程、AI 绘画、工作、网络、硬件、游戏、个人、其他。
+- 用户偏好：先完成任务，再写 Obsidian 总结；回答尽量直接、少废话。
+- 记忆读取策略：默认只读本节和用户当前消息；按任务关键词检索相关条目；不要默认展开全部历史。
+- 同步策略：记忆文件用本地版本覆盖；其他 vault 差异以 GitHub 仓库为准。
+- 安全规则：不记录 API key、密码、token、订阅原文等敏感信息。
+- Codex 主要插件：`obsidian-codex-memory`。
+
+## 读取策略
+
+- 普通任务：只读“启动必读”和用户当前消息。
+- Obsidian/GitHub/同步任务：再检索 `obsidian`、`sync`、`git/github`、`github-sync`、`vault-structure`。
+- 插件/记忆任务：再检索 `codex/plugin`、`codex/memory`、`obsidian-codex-memory`。
+- 旧问题复盘：只读取命中的 1-3 个历史日志块。
+- 除非用户要求“完整读取记忆”，否则不要读取整篇会话总结。
+
+## 任务检索索引
+
+### Obsidian 与同步
+
+关键词：`obsidian`、`vault-structure`、`git/github`、`sync`、`github-sync`、`iCloud`、`obsidian-git`、`dataview`
+
+用途：仓库路径、分类结构、GitHub 同步、iCloud 多端同步、Obsidian 社区插件状态。
+
+### Codex 记忆与插件
+
+关键词：`codex/memory`、`codex/plugin`、`obsidian-codex-memory`、`token-saving`、`optimization`、`self-learning`
+
+用途：长期记忆读取规则、会话总结写入、插件脚本、token 节省策略。
+
+## 固定路径索引
+
+- 当前 Obsidian vault：`{vault}`
+- 当前主会话总结：`{vault / rel}`
+- 当前 Codex 记忆插件：自动安装到用户本机插件目录，通常是 `~/plugins/obsidian-codex-memory`。
+
+## 历史归档说明
+
+- 下面日志只作为可检索历史，默认不完整读取。
+- 新增总结控制在 5 行以内，只记录会影响后续任务的路径、偏好、结论、坑点和验证结果。
+- 稳定信息沉淀到“启动必读”或“固定路径索引”，不要在每条日志里重复展开。
+
+## 会话日志
+"""
+
+
+def ensure_memory_note() -> None:
+    path = memory_path()
+    if path.exists():
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(default_memory_template(vault_path(), memory_rel()), encoding="utf-8")
+    print(f"Created memory note: {path}")
+
+
+def section(text: str, heading: str) -> str:
+    start = text.find(heading)
+    if start == -1:
+        return ""
+    next_start = text.find("\n## ", start + 1)
+    return text[start : next_start if next_start != -1 else len(text)].strip()
+
+
+def split_logs(text: str) -> List[str]:
+    logs = section(text, LOGS_HEADING)
+    if not logs:
+        return []
+    parts = logs.split("\n### ")
+    if len(parts) <= 1:
+        return []
+    return ["### " + part.strip() for part in parts[1:] if part.strip()]
+
+
+def matched_logs(text: str, query: str, limit: int) -> List[str]:
+    terms = [term.strip().lower() for term in query.replace(",", " ").split() if term.strip()]
+    if not terms:
+        return []
+    matches = []
+    for block in reversed(split_logs(text)):
+        lower = block.lower()
+        if any(term in lower for term in terms):
+            matches.append(block)
+        if len(matches) >= limit:
+            break
+    return list(reversed(matches))
+
+
+def init(vault: str, memory: Optional[str], create: bool) -> None:
     vault_dir = Path(vault).expanduser().resolve()
     if not vault_dir.exists():
         raise SystemExit(f"Vault path does not exist: {vault_dir}")
@@ -155,12 +260,14 @@ def init(vault: str, memory: Optional[str]) -> None:
     if memory:
         config["memory_rel"] = memory
     save_config(config)
+    if create:
+        ensure_memory_note()
     print(f"Saved config: {config_path()}")
     print(f"Vault: {vault_dir}")
     print(f"Memory note: {memory_path()}")
 
 
-def read_memory(full: bool = False) -> None:
+def read_memory(full: bool = False, query: str = "", logs_limit: int = 3) -> None:
     path = memory_path()
     if not path.exists():
         raise SystemExit(f"Memory note not found: {path}")
@@ -170,18 +277,14 @@ def read_memory(full: bool = False) -> None:
         return
 
     sections = []
-    for heading in ["## 使用规则", "## 固定路径索引", "## 时间索引"]:
-        start = text.find(heading)
-        if start == -1:
-            continue
-        next_start = text.find("\n## ", start + 1)
-        sections.append(text[start : next_start if next_start != -1 else len(text)].strip())
+    for heading in [STARTUP_HEADING, "## 读取策略", "## 任务检索索引", "## 固定路径索引"]:
+        found = section(text, heading)
+        if found:
+            sections.append(found)
 
-    logs_start = text.find("## 会话日志")
-    if logs_start != -1:
-        logs = text[logs_start:].split("\n### ")
-        recent = logs[:1] + logs[-5:]
-        sections.append("\n### ".join(recent).strip())
+    matches = matched_logs(text, query, logs_limit)
+    if matches:
+        sections.append(LOGS_HEADING + "\n\n" + "\n\n".join(matches))
 
     print("\n\n".join(s for s in sections if s))
 
@@ -190,6 +293,7 @@ def append_summary(summary: str, tags: str, source: str, keywords: str) -> None:
     path = memory_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     existing = path.read_text(encoding="utf-8") if path.exists() else "# Codex 会话总结\n\n## 会话日志\n"
+    summary = summary.replace("\\n", "\n")
     ts = now_iso()
     block = (
         f"\n\n### {ts}\n\n"
@@ -270,9 +374,12 @@ def main() -> None:
     init_p = sub.add_parser("init", help="Save the Obsidian vault path for this computer.")
     init_p.add_argument("--vault", required=True)
     init_p.add_argument("--memory-rel", default=None)
+    init_p.add_argument("--no-create", action="store_true", help="Do not create the default memory note if it is missing.")
 
     read_p = sub.add_parser("read", help="Read compact Codex memory.")
     read_p.add_argument("--full", action="store_true")
+    read_p.add_argument("--query", default="", help="Optional keywords for retrieving 1-3 matching history blocks.")
+    read_p.add_argument("--logs-limit", type=int, default=3, help="Maximum matched history blocks to include.")
 
     append_p = sub.add_parser("append", help="Append a compact memory summary.")
     append_p.add_argument("--summary", required=True)
@@ -287,9 +394,9 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.cmd == "init":
-        init(args.vault, args.memory_rel)
+        init(args.vault, args.memory_rel, not args.no_create)
     elif args.cmd == "read":
-        read_memory(args.full)
+        read_memory(args.full, args.query, args.logs_limit)
     elif args.cmd == "append":
         append_summary(args.summary, args.tags, args.source, args.keywords)
     elif args.cmd == "sync-github":

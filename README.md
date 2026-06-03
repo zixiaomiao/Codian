@@ -9,6 +9,9 @@
 ## 功能
 
 - 从你的 Obsidian vault 读取 `Codex/Codex 会话总结.md`。
+- 初始化时可自动创建一份通用“启动必读”记忆模板。
+- 默认只读取启动规则、读取策略、检索索引和固定路径，避免每次展开完整历史。
+- 支持按关键词检索 1-3 条相关历史日志，适合节省 token。
 - 追加简洁的 Codex 会话总结。
 - 支持通过 `OBSIDIAN_VAULT` 或本地配置指定任意 vault 路径。
 - 可以只同步记忆文件到 GitHub，同时让其他 vault 差异以 GitHub 为准。
@@ -48,6 +51,12 @@ python "$env:USERPROFILE\plugins\obsidian-codex-memory\scripts\obsidian_memory.p
 
 ```bash
 python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read
+```
+
+按关键词读取相关历史，默认最多 3 条：
+
+```bash
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read --query "obsidian sync git/github"
 ```
 
 读取完整记忆笔记：
@@ -93,6 +102,27 @@ Codex/Codex 会话总结.md
 ```bash
 python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py init --vault "/path/to/vault" --memory-rel "Codex/My Memory.md"
 ```
+
+如果这个笔记不存在，`init` 会创建一份通用模板，包含：
+
+- 启动必读
+- 读取策略
+- 任务检索索引
+- 固定路径索引
+- 历史归档说明
+- 会话日志
+
+这份模板不会写入你的个人路径以外的固定信息；vault 路径会按当前电脑自动写入。
+
+## Token 节省策略
+
+插件默认遵循这套读取逻辑：
+
+- 普通任务：只读“启动必读”和用户当前消息。
+- Obsidian/GitHub/同步任务：再检索 `obsidian`、`sync`、`git/github`、`github-sync` 等关键词。
+- 插件/记忆任务：再检索 `codex/plugin`、`codex/memory`、`obsidian-codex-memory` 等关键词。
+- 旧问题复盘：只读取命中的 1-3 个历史日志块。
+- 除非明确要求完整读取，否则不展开整篇会话总结。
 
 ## 安装脚本做了什么
 

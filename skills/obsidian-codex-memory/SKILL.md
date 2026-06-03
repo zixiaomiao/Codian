@@ -31,40 +31,44 @@ python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py init --vault 
 
 ## Workflow
 
-1. Before doing substantial work, read compact memory:
+1. At the start of any task, read token-saving memory before doing substantial work. Default reading should only load startup rules, reading strategy, indexes, fixed paths, and any history blocks explicitly matched by query keywords:
 
 ```bash
-python3 /Users/xiao/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read
 ```
 
-If the plugin is installed somewhere else, use the installed plugin root instead of
-`/Users/xiao/plugins/obsidian-codex-memory`.
+For Obsidian, GitHub, sync, plugin, memory, or retrospective tasks, pass task keywords and read only 1-3 matching history blocks:
+
+```bash
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read --query "obsidian sync git/github"
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read --query "codex/plugin obsidian-codex-memory"
+```
+
+Use the installed plugin root if it is not installed in `~/plugins/obsidian-codex-memory`.
 
 2. Finish the user's actual task.
 
-3. If the user asks to update memory, or the work creates a durable preference, path, fix, or operating rule, append a compact summary:
+3. After the task is complete, append a compact summary only if the user asks to update memory, or the work creates a durable preference, path, fix, or operating rule:
 
 ```bash
-python3 /Users/xiao/plugins/obsidian-codex-memory/scripts/obsidian_memory.py append --summary "<5-8 line summary>"
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py append --summary "<5 lines max>"
 ```
 
-If the plugin is installed somewhere else, use the installed plugin root instead of
-`/Users/xiao/plugins/obsidian-codex-memory`.
+Keep summaries short. Record only durable paths, preferences, conclusions, pitfalls, and verified fixes.
 
 4. For selective GitHub sync of memory files:
 
 ```bash
-python3 /Users/xiao/plugins/obsidian-codex-memory/scripts/obsidian_memory.py sync-github --dry-run
-python3 /Users/xiao/plugins/obsidian-codex-memory/scripts/obsidian_memory.py sync-github
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py sync-github --dry-run
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py sync-github
 ```
-
-If the plugin is installed somewhere else, use the installed plugin root instead of
-`/Users/xiao/plugins/obsidian-codex-memory`.
 
 ## Rules
 
 - Do not record API keys, passwords, tokens, or private credentials.
-- Keep summaries compact. Record durable preferences, paths, conclusions, pitfalls, and verified fixes.
 - Do not dump the entire memory note unless the user asks for full memory.
+- For ordinary tasks, use startup memory only. For specialized tasks, query matching history blocks by keywords.
+- Complete the user's task before writing a memory summary.
+- Keep new summaries within 5 lines when possible.
 - Prefer UTF-8 direct file writes. Avoid shell pipelines that can corrupt Chinese text.
 - For GitHub sync, only the allowed memory files may overwrite remote; all other local differences should follow GitHub.

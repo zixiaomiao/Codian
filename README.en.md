@@ -9,6 +9,9 @@ This is a **Codex plugin**, not an Obsidian community plugin. It lets Codex read
 ## What it does
 
 - Reads `Codex/Codex 会话总结.md` from your Obsidian vault.
+- Creates a generic startup memory template during initialization when the memory note is missing.
+- Reads only startup rules, reading strategy, indexes, and fixed paths by default instead of expanding full history.
+- Retrieves 1-3 relevant history blocks by keyword to save tokens.
 - Appends compact Codex session summaries.
 - Supports any vault path through `OBSIDIAN_VAULT` or a saved local config.
 - Can selectively sync memory files to GitHub while keeping other vault differences aligned with GitHub.
@@ -48,6 +51,12 @@ Read compact memory:
 
 ```bash
 python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read
+```
+
+Read relevant history by keywords, up to 3 blocks by default:
+
+```bash
+python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py read --query "obsidian sync git/github"
 ```
 
 Read the full memory note:
@@ -93,6 +102,27 @@ You can change it when initializing:
 ```bash
 python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py init --vault "/path/to/vault" --memory-rel "Codex/My Memory.md"
 ```
+
+If the note does not exist, `init` creates a generic template with:
+
+- Startup rules
+- Reading strategy
+- Task retrieval index
+- Fixed path index
+- History archive notes
+- Session logs
+
+The template does not hard-code another user's local paths. It records the current computer's configured vault path.
+
+## Token-saving strategy
+
+The plugin defaults to this reading logic:
+
+- Ordinary tasks: read only startup rules and the current user message.
+- Obsidian/GitHub/sync tasks: also query `obsidian`, `sync`, `git/github`, `github-sync`, and similar terms.
+- Plugin/memory tasks: also query `codex/plugin`, `codex/memory`, `obsidian-codex-memory`, and similar terms.
+- Retrospectives: read only 1-3 matched history blocks.
+- Never expand the whole session summary unless explicitly requested.
 
 ## How installation works
 
