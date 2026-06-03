@@ -8,6 +8,26 @@ This is a **Codex plugin**, not an Obsidian community plugin. It lets Codex read
 
 For the future optimization plan, see [ROADMAP.md](ROADMAP.md).
 
+## Current status
+
+The current version has completed **Stage 2: Memory categories**.
+
+Completed:
+
+- Basic long-term memory workflow: read, append, and compactly retrieve `Codex/Codex 会话总结.md`.
+- Stage 1 Project Summary: generate and prioritize `Codex/project-summary.md`.
+- Stage 2 Memory categories: generate `Codex/memory/Project.md`, `Decision.md`, `Todo.md`, `Bug.md`, and `User-Preference.md`.
+- Keyword-based reads that load matching category files before startup rules and a few matched history blocks.
+- Conservative GitHub sync: only Codex memory files are synced; the plugin does not manage the whole Obsidian vault.
+- Verified parity between local source, installed Codex plugin cache, and GitHub `main`.
+
+Not finished yet:
+
+- Stage 3 Decision Log: dedicated records for why decisions were made.
+- Stage 4 Auto-summary and archive: compress old logs to prevent unbounded memory growth.
+- Stage 5 Memory quality: duplicate detection, similar-memory merging, and importance scoring.
+- Stage 6 Generate Context: create standard context files for Codex, Claude Code, Cursor, and similar coding tools.
+
 ## What it does
 
 - Reads `Codex/Codex 会话总结.md` from your Obsidian vault.
@@ -178,14 +198,17 @@ The plugin defaults to this reading logic:
 
 For a session summary around 18,000 characters, reading the full file may cost roughly 9k-16k tokens. With this plugin, the default startup read is usually around 1k-2k tokens; adding 1-3 keyword-matched history blocks is usually around 2k-4k tokens.
 
+After Stage 2, the normal read path is more stable: read the project summary first, then matching category files, then only a few history blocks when needed. This keeps long-term memory context in the low-thousands of tokens while making stable content more cache-friendly.
+
 | Scenario | Read content | Estimated tokens | Compared with full read |
 | --- | --- | --- | --- |
 | No memory read | No long-term memory | 0 | Cheapest, but no memory benefit |
-| Default plugin read | Startup rules, reading strategy, indexes, fixed paths | About 1k-2k | Saves about 80%-90% |
-| Plugin + keyword search | Default read + 1-3 relevant history blocks | About 2k-4k | Saves about 65%-85% |
+| Default plugin read | Project Summary, startup rules, reading strategy, indexes, fixed paths | About 1k-2k | Saves about 80%-90% |
+| Plugin + category read | Default read + one matching category file | About 1.5k-3k | Saves about 70%-90% |
+| Plugin + category + keyword search | Default read + matching categories + 1-3 relevant history blocks | About 2k-4k | Saves about 65%-85% |
 | Full session summary read | Entire memory file | About 9k-16k | Baseline |
 
-Cache-wise, the default startup sections are stable and are more likely to be reused. Keyword matches vary by task, so their cache hit rate is more moderate. Full reads contain stable parts too, but ongoing log appends and larger payloads can reduce practical cache benefit.
+Cache-wise, Project Summary, startup rules, and category files are more stable than the full log and are more likely to be reused. Keyword-matched history varies by task, so its cache hit rate is more moderate. Full reads contain stable parts too, but ongoing log appends and larger payloads can reduce practical cache benefit.
 
 In short: this is not meant to compete with reading no memory at all. It reduces the cost of long-term memory from tens of thousands of tokens to a few thousand while preserving useful context.
 

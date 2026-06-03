@@ -15,7 +15,7 @@ python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py project-summa
 
 它会从 `Codex/Codex 会话总结.md` 生成 `Codex/project-summary.md`，作为 Codex 启动时优先读取的低 token 项目上下文。
 
-后续继续增强摘要质量。
+状态：已完成基础版，后续继续增强摘要质量。
 
 插件从记忆库中提炼：
 
@@ -39,7 +39,9 @@ python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py memory-catego
 
 它会从 `Codex/Codex 会话总结.md` 生成 `Codex/memory/` 下的分类文件。
 
-建议分类：
+状态：已完成基础版。
+
+当前分类：
 
 - Project
 - Decision
@@ -49,9 +51,13 @@ python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py memory-catego
 
 这样既方便用户查看，也方便 AI 精准读取相关内容。
 
+当前读取策略：`read --query` 会按关键词加载匹配分类，再加载启动规则和少量命中日志。
+
 ## 第三阶段：Decision Log
 
 实现 Decision Log，也就是决策记录系统。
+
+状态：未完成。
 
 重点记录“为什么这样做”，而不是只记录“做了什么”。例如：
 
@@ -68,6 +74,8 @@ python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py memory-catego
 
 目标是把数千甚至上万 token 的历史内容压缩为几百 token 的核心信息。
 
+状态：未完成。
+
 ## 第五阶段：记忆质量优化
 
 增加记忆质量优化机制：
@@ -77,6 +85,8 @@ python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py memory-catego
 - 重要性评分，也就是 Importance Score
 - 高价值记忆优先保留和读取
 - 低价值记忆自动降权或归档
+
+状态：未完成。
 
 ## 第六阶段：Generate Context
 
@@ -92,6 +102,8 @@ python3 ~/plugins/obsidian-codex-memory/scripts/obsidian_memory.py memory-catego
 - 近期变更
 
 该功能应成为插件的核心亮点。
+
+状态：未完成。
 
 ## 长期规划
 
