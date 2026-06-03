@@ -676,7 +676,12 @@ def sync_github(dry_run: bool = False, branch: str = "main") -> None:
         print("Nothing to sync.")
         return
 
-    run(["git", "add", *sorted(allowed)], cwd=vault, check=False)
+    add_targets = sorted(path for path in allowed if (vault / path).exists() or path in changed)
+    if not add_targets:
+        print("No allowed memory changes to commit.")
+        return
+
+    run(["git", "add", *add_targets], cwd=vault)
     if run(["git", "diff", "--cached", "--quiet"], cwd=vault, check=False).returncode != 0:
         run(["git", "commit", "-m", "Sync Codex memory files"], cwd=vault)
         run(["git", "push", "origin", branch], cwd=vault)
