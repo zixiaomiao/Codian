@@ -15,7 +15,7 @@ See [ROADMAP.md](ROADMAP.md) for planned improvements.
 Default Codex memory vault layout:
 
 ```text
-codian/
+Codian Memory/
   README.md
   AGENTS.md
   00-入口/
@@ -40,10 +40,10 @@ On first use, the plugin asks the user for the Obsidian vault path and saves the
 
 ## Features
 
-- Reads `codian/README.md` and `codian/AGENTS.md` first, then `codian/10-Context-上下文/project-summary.md`.
-- Reads `codian/30-Logs-日志/codex-session-summary.md` as the full session log.
-- Generates categorized memory files under `codian/20-Memory-记忆/`.
-- Creates the `codian/` directory, the new subdirectory layout, `README.md`, `AGENTS.md`, and workflow files during init.
+- Reads `Codian Memory/README.md` and `Codian Memory/AGENTS.md` first, then `Codian Memory/10-Context-上下文/project-summary.md`.
+- Reads `Codian Memory/30-Logs-日志/codex-session-summary.md` as the full session log.
+- Generates categorized memory files under `Codian Memory/20-Memory-记忆/`.
+- Creates the `Codian Memory/` directory, the new subdirectory layout, `README.md`, `AGENTS.md`, and workflow files during init.
 - Compact reads prioritize the project summary, then matching categories, startup rules, and a few matched history entries.
 - Supports keyword lookup for 1-3 relevant historical log blocks.
 - Appends compact Codex session summaries.
@@ -120,8 +120,8 @@ python3 ~/.codex/skills/Codian/scripts/obsidian_memory.py append --summary "5-8 
 
 ## Token Saving Strategy
 
-- Ordinary tasks: read `codian/README.md`, `codian/AGENTS.md`, and `codian/10-Context-上下文/project-summary.md` first, then startup rules and the current user message.
-- Category tasks: read matching files under `codian/20-Memory-记忆/` by keyword.
+- Ordinary tasks: read `Codian Memory/README.md`, `Codian Memory/AGENTS.md`, and `Codian Memory/10-Context-上下文/project-summary.md` first, then startup rules and the current user message.
+- Category tasks: read matching files under `Codian Memory/20-Memory-记忆/` by keyword.
 - Obsidian/memory tasks: search for `obsidian`, `vault-structure`, `codian`.
 - Plugin/memory tasks: search for `codex/plugin`, `codex/memory`, `codian`.
 - Historical review: include only 1-3 matched log blocks.

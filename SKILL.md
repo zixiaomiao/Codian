@@ -85,7 +85,7 @@ python3 <skill_dir>/scripts/obsidian_memory.py memory-categories --max-logs 80
 The Obsidian vault uses this directory layout:
 
 ```
-codian/                       # Codian memory root created in the Obsidian vault
+Codian Memory/                # Codian memory root created in the Obsidian vault
   README.md                   # Entry point
   AGENTS.md                   # Codex behavior rules
   00-入口/                     # Quick navigation
