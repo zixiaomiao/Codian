@@ -78,13 +78,13 @@ irm https://raw.githubusercontent.com/zixiaomiao/codian/main/install.ps1 | iex
 安装后配置你的 Obsidian vault：
 
 ```bash
-python3 ~/plugins/codian/scripts/obsidian_memory.py init --vault "/path/to/your/Obsidian vault"
+python3 ~/.codex/skills/codian/scripts/obsidian_memory.py init --vault "/path/to/your/Obsidian vault"
 ```
 
 Windows：
 
 ```powershell
-python "$env:USERPROFILE\plugins\codian\scripts\obsidian_memory.py" init --vault "D:\path\to\your\Obsidian vault"
+python "$env:USERPROFILE\.codex\skills\codian\scripts\obsidian_memory.py" init --vault "D:\path\to\your\Obsidian vault"
 ```
 
 你也可以不写入本地配置，直接在 shell 环境里设置 `OBSIDIAN_VAULT`。
@@ -94,37 +94,37 @@ python "$env:USERPROFILE\plugins\codian\scripts\obsidian_memory.py" init --vault
 读取精简记忆：
 
 ```bash
-python3 ~/plugins/codian/scripts/obsidian_memory.py read
+python3 ~/.codex/skills/codian/scripts/obsidian_memory.py read
 ```
 
 生成或刷新项目摘要：
 
 ```bash
-python3 ~/plugins/codian/scripts/obsidian_memory.py project-summary
+python3 ~/.codex/skills/codian/scripts/obsidian_memory.py project-summary
 ```
 
 生成或刷新分类记忆：
 
 ```bash
-python3 ~/plugins/codian/scripts/obsidian_memory.py memory-categories
+python3 ~/.codex/skills/codian/scripts/obsidian_memory.py memory-categories
 ```
 
 按关键词读取相关历史，默认最多 3 条：
 
 ```bash
-python3 ~/plugins/codian/scripts/obsidian_memory.py read --query "obsidian memory plugin"
+python3 ~/.codex/skills/codian/scripts/obsidian_memory.py read --query "obsidian memory plugin"
 ```
 
 读取完整记忆日志：
 
 ```bash
-python3 ~/plugins/codian/scripts/obsidian_memory.py read --full
+python3 ~/.codex/skills/codian/scripts/obsidian_memory.py read --full
 ```
 
 追加一条总结：
 
 ```bash
-python3 ~/plugins/codian/scripts/obsidian_memory.py append --summary "5-8 行长期有用的 session summary"
+python3 ~/.codex/skills/codian/scripts/obsidian_memory.py append --summary "5-8 行长期有用的 session summary"
 ```
 
 ## Token 节省策略
@@ -154,12 +154,11 @@ python3 ~/plugins/codian/scripts/obsidian_memory.py append --summary "5-8 行长
 
 安装脚本会：
 
-- 把这个仓库克隆或更新到 `~/plugins/codian`
-- 把 `skills/codian` 同步安装到 `~/.codex/skills/codian`
+- 把这个仓库克隆或更新到 `~/.codex/skills/codian`
 - 创建或更新 `~/.agents/plugins/marketplace.json`
 - 把插件注册到 Codex 的个人插件市场
 
-安装后，Codex 可以直接读取独立 skill；也可以打开 Codex，在个人插件市场里启用 **Codian** 插件。
+安装后，Codex 直接从 `~/.codex/skills/codian` 读取这个插件。
 
 ## 环境要求
 

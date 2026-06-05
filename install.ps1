@@ -2,12 +2,10 @@ $ErrorActionPreference = "Stop"
 
 $RepoUrl = if ($env:CODIA_REPO) { $env:CODIA_REPO } else { "https://github.com/zixiaomiao/codian.git" }
 $PluginName = "codian"
-$PluginDir = if ($env:CODIA_PLUGIN_DIR) { $env:CODIA_PLUGIN_DIR } else { Join-Path $env:USERPROFILE "plugins\$PluginName" }
 $CodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE ".codex" }
 $SkillDir = if ($env:CODIA_SKILL_DIR) { $env:CODIA_SKILL_DIR } else { Join-Path $CodexHome "skills\$PluginName" }
 $MarketplacePath = if ($env:CODIA_MARKETPLACE) { $env:CODIA_MARKETPLACE } else { Join-Path $env:USERPROFILE ".agents\plugins\marketplace.json" }
-$DefaultPluginDir = Join-Path $env:USERPROFILE "plugins\$PluginName"
-$SourcePath = if ($PluginDir -eq $DefaultPluginDir) { "./plugins/$PluginName" } else { $PluginDir }
+$SourcePath = $SkillDir
 
 function Require-Command($Name) {
   if (-not (Get-Command $Name -ErrorAction SilentlyContinue)) {
@@ -18,21 +16,16 @@ function Require-Command($Name) {
 Require-Command git
 Require-Command python
 
-New-Item -ItemType Directory -Force -Path (Split-Path $PluginDir) | Out-Null
-
-if (Test-Path (Join-Path $PluginDir ".git")) {
-  git -C $PluginDir pull --ff-only
-} elseif (Test-Path $PluginDir) {
-  throw "Plugin directory already exists but is not a Git repo: $PluginDir"
-} else {
-  git clone $RepoUrl $PluginDir
-}
-
-if (Test-Path $SkillDir) {
-  Remove-Item -Recurse -Force $SkillDir
-}
 New-Item -ItemType Directory -Force -Path (Split-Path $SkillDir) | Out-Null
-Copy-Item -Recurse -Force (Join-Path $PluginDir "skills\$PluginName") $SkillDir
+
+if (Test-Path (Join-Path $SkillDir ".git")) {
+  git -C $SkillDir pull --ff-only
+} elseif (Test-Path $SkillDir) {
+  Remove-Item -Recurse -Force $SkillDir
+  git clone $RepoUrl $SkillDir
+} else {
+  git clone $RepoUrl $SkillDir
+}
 
 New-Item -ItemType Directory -Force -Path (Split-Path $MarketplacePath) | Out-Null
 
@@ -85,17 +78,14 @@ print(f"Registered {plugin_name} in {marketplace_path}")
 $RegisterScript | python - $MarketplacePath $PluginName $SourcePath
 
 if ($env:OBSIDIAN_VAULT) {
-  python (Join-Path $PluginDir "scripts\obsidian_memory.py") init --vault $env:OBSIDIAN_VAULT
+  python (Join-Path $SkillDir "scripts\obsidian_memory.py") init --vault $env:OBSIDIAN_VAULT
 }
 
 Write-Host ""
 Write-Host "Installed $PluginName at:"
-Write-Host "  $PluginDir"
-Write-Host ""
-Write-Host "Installed Codex skill at:"
 Write-Host "  $SkillDir"
 Write-Host ""
 Write-Host "Next, configure your Obsidian vault if you have not already:"
-Write-Host "  python `"$PluginDir\scripts\obsidian_memory.py`" init --vault `"D:\path\to\your\Obsidian vault`""
+Write-Host "  python `"$SkillDir\scripts\obsidian_memory.py`" init --vault `"D:\path\to\your\Obsidian vault`""
 Write-Host ""
 Write-Host "Then enable `"Codian`" in Codex."

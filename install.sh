@@ -3,15 +3,10 @@ set -euo pipefail
 
 REPO_URL="${CODIA_REPO:-https://github.com/zixiaomiao/codian.git}"
 PLUGIN_NAME="codian"
-PLUGIN_DIR="${CODIA_PLUGIN_DIR:-$HOME/plugins/$PLUGIN_NAME}"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 SKILL_DIR="${CODIA_SKILL_DIR:-$CODEX_HOME/skills/$PLUGIN_NAME}"
 MARKETPLACE_PATH="${CODIA_MARKETPLACE:-$HOME/.agents/plugins/marketplace.json}"
-SOURCE_PATH="$PLUGIN_DIR"
-
-if [ "$PLUGIN_DIR" = "$HOME/plugins/$PLUGIN_NAME" ]; then
-  SOURCE_PATH="./plugins/$PLUGIN_NAME"
-fi
+SOURCE_PATH="$SKILL_DIR"
 
 need() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -23,21 +18,17 @@ need() {
 need git
 need python3
 
-mkdir -p "$(dirname "$PLUGIN_DIR")"
-
-if [ -d "$PLUGIN_DIR/.git" ]; then
-  git -C "$PLUGIN_DIR" pull --ff-only
-elif [ -d "$PLUGIN_DIR" ]; then
-  echo "Plugin directory already exists but is not a Git repo: $PLUGIN_DIR" >&2
-  echo "Move it aside or set CODIA_PLUGIN_DIR to another path." >&2
-  exit 1
-else
-  git clone "$REPO_URL" "$PLUGIN_DIR"
-fi
-
-rm -rf "$SKILL_DIR"
 mkdir -p "$(dirname "$SKILL_DIR")"
-cp -R "$PLUGIN_DIR/skills/$PLUGIN_NAME" "$SKILL_DIR"
+
+if [ -d "$SKILL_DIR/.git" ]; then
+  git -C "$SKILL_DIR" pull --ff-only
+elif [ -d "$SKILL_DIR" ]; then
+  echo "Refreshing existing Codian directory: $SKILL_DIR"
+  rm -rf "$SKILL_DIR"
+  git clone "$REPO_URL" "$SKILL_DIR"
+else
+  git clone "$REPO_URL" "$SKILL_DIR"
+fi
 
 mkdir -p "$(dirname "$MARKETPLACE_PATH")"
 
@@ -88,19 +79,16 @@ print(f"Registered {plugin_name} in {marketplace_path}")
 PY
 
 if [ -n "${OBSIDIAN_VAULT:-}" ]; then
-  python3 "$PLUGIN_DIR/scripts/obsidian_memory.py" init --vault "$OBSIDIAN_VAULT"
+  python3 "$SKILL_DIR/scripts/obsidian_memory.py" init --vault "$OBSIDIAN_VAULT"
 fi
 
 cat <<EOF
 
 Installed $PLUGIN_NAME at:
-  $PLUGIN_DIR
-
-Installed Codex skill at:
   $SKILL_DIR
 
 Next, configure your Obsidian vault if you have not already:
-  python3 "$PLUGIN_DIR/scripts/obsidian_memory.py" init --vault "/path/to/your/Obsidian vault"
+  python3 "$SKILL_DIR/scripts/obsidian_memory.py" init --vault "/path/to/your/Obsidian vault"
 
 Then enable "Codian" in Codex.
 EOF
