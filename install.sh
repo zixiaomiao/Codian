@@ -23,7 +23,7 @@ mkdir -p "$(dirname "$SKILL_DIR")"
 if [ -d "$SKILL_DIR/.git" ]; then
   git -C "$SKILL_DIR" pull --ff-only
 elif [ -d "$SKILL_DIR" ]; then
-  echo "Refreshing existing Codian directory: $SKILL_DIR"
+  echo "Refreshing existing Codin directory: $SKILL_DIR"
   rm -rf "$SKILL_DIR"
   git clone "$REPO_URL" "$SKILL_DIR"
 else
@@ -90,5 +90,5 @@ Installed $PLUGIN_NAME at:
 Next, configure your Obsidian vault if you have not already:
   python3 "$SKILL_DIR/scripts/obsidian_memory.py" init --vault "/path/to/your/Obsidian vault"
 
-Then enable "Codian" in Codex.
+Then enable "Codin" in Codex.
 EOF

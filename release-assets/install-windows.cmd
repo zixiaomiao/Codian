@@ -54,11 +54,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "Write-Host \"Registered $pluginName in $marketplacePath\""
 
 echo.
-echo Installed Codian.
+echo Installed Codin.
 echo Skill path: %SKILL_DIR%
 echo.
 echo Next step:
-echo   Open Codex, enable Codian, then configure your Obsidian vault if needed.
+echo   Open Codex, enable Codin, then configure your Obsidian vault if needed.
 echo.
 echo Optional vault config command:
 echo   python "%SKILL_DIR%\scripts\obsidian_memory.py" init --vault "D:\path\to\your\Obsidian vault"

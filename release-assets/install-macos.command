@@ -85,11 +85,11 @@ print(f"Registered {plugin_name} in {marketplace_path}")
 PY
 
 echo
-echo "Installed Codian."
+echo "Installed Codin."
 echo "Skill path: $SKILL_DIR"
 echo
 echo "Next step:"
-echo "  Open Codex, enable Codian, then configure your Obsidian vault if needed."
+echo "  Open Codex, enable Codin, then configure your Obsidian vault if needed."
 echo
 echo "Optional vault config command:"
 echo "  python3 \"$SKILL_DIR/scripts/obsidian_memory.py\" init --vault \"/path/to/your/Obsidian vault\""
