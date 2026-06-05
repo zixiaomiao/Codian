@@ -142,10 +142,10 @@ python3 ~/.codex/skills/codian/scripts/obsidian_memory.py append --summary "5-8 
 
 ## What the installer does
 
-- Clones or updates this repository at `~/.codex/skills/codian`.
+- Clones or updates this repository contents into `~/.codex/skills/codian`.
 - Registers Codin in the Codex personal marketplace.
 
-After installation, Codex reads the plugin directly from `~/.codex/skills/codian`.
+After installation, Codex reads the plugin directly from `~/.codex/skills/codian`, and the root-level `SKILL.md` is the skill definition.
 
 ## License
 

@@ -154,11 +154,11 @@ python3 ~/.codex/skills/codian/scripts/obsidian_memory.py append --summary "5-8 
 
 安装脚本会：
 
-- 把这个仓库克隆或更新到 `~/.codex/skills/codian`
+- 把这个仓库内容克隆或更新到 `~/.codex/skills/codian`
 - 创建或更新 `~/.agents/plugins/marketplace.json`
 - 把插件注册到 Codex 的个人插件市场
 
-安装后，Codex 直接从 `~/.codex/skills/codian` 读取这个插件。
+安装后，Codex 直接从 `~/.codex/skills/codian` 读取这个插件，根目录里的 `SKILL.md` 就是 skill 本体。
 
 ## 环境要求
 
